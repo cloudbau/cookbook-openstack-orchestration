@@ -1,0 +1,10 @@
+default[:heat][:git_repository] = "git://github.com/openstack/heat.git"
+default[:heat][:git_revision] = "master"
+
+default[:heat][:auth_host] = "127.0.0.1"
+default[:heat][:auth_port] = "35357"
+default[:heat][:auth_protocol] = "http"
+default[:heat][:auth_uri] = "http://127.0.0.1:5000/v2.0"
+default[:heat][:admin_tenant_name] = "service"
+default[:heat][:admin_user] = "heat"
+default[:heat][:admin_password] = "badpassword"
