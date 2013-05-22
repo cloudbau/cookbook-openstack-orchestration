@@ -8,4 +8,7 @@ Gemfile.lock
 .*.sw[a-z]
 *.un~
 /cookbooks
+.cookbooks/
 config.yml
+.bundle
+

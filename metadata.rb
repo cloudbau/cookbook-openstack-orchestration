@@ -1,4 +1,4 @@
-name             "cookbook-openstack-orchestration"
+name             "openstack-orchestration"
 maintainer       "Hendrik Volkmer"
 maintainer_email "h.volkmer@cloudbau.de"
 license          "Apache License, Version 2.0"

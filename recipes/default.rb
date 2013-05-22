@@ -98,7 +98,7 @@ template "/etc/heat/heat-api-cfn.conf" do
 end
 
 bash "setup heat db" do
-  code "heat-db-setup deb -r #{node['mysql']['server_root_password']}"
+  code "heat-db-setup deb -r #{node[:mysql][:server_root_password]}"
 end
 
 # Start the services
