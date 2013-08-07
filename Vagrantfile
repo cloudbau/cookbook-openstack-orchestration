@@ -30,7 +30,6 @@ Vagrant.configure("2") do |config|
     end
   else
     config.vm.box = "precise64"
-    #  config.vm.box_url = "https://dl.dropbox.com/u/31081437/Berkshelf-CentOS-6.3-x86_64-minimal.box"
   end
 
   config.ssh.max_tries = 40

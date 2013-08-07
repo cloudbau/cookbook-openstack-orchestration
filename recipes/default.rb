@@ -17,30 +17,20 @@
 # limitations under the License.
 # 
 
-# TODO: Use apt recipe 
-bash "force apt update" do
-  code "apt-get update"
-end
+include_recipe "apt"
+resources(:execute => 'apt-get update').run_action(:run)
 
 include_recipe "mysql::server"
 include_recipe "rabbitmq::default"
 
-%w{
-  libxml2-dev 
-  libxslt-dev  
-  python-mysqldb
-  git
-  python2.7
-  python-setuptools
-  python-qpid
-  python-dev
-  libxml2-dev
-  libxslt-dev
-}.each do |pkg|
+node[:heat][:platform][:dependencies].each do |pkg|
   package pkg do
     action :install
   end
 end
+
+# needed by heat's setup.py
+python_pip "pbr"
 
 git "heat" do
   repository node[:heat][:git_repository]
@@ -50,6 +40,7 @@ git "heat" do
   notifies :run, "bash[install_heat]"
 end
 
+# needs python-pip
 bash "install_heat" do
   code "cd /tmp/heat && ./install.sh"
 end
@@ -67,6 +58,7 @@ template "/etc/heat/heat-api.conf" do
     :admin_user => node[:heat][:admin_user],
     :admin_password => node[:heat][:admin_password]
     })
+  notifies :restart, 'service[heat-api]', :delayed
 end
 
 template "/etc/heat/heat-api-cloudwatch.conf" do 
@@ -81,6 +73,7 @@ template "/etc/heat/heat-api-cloudwatch.conf" do
     :admin_user => node[:heat][:admin_user],
     :admin_password => node[:heat][:admin_password]
     })
+  notifies :restart, 'service[heat-api-cloudwatch]', :delayed
 end
 
 template "/etc/heat/heat-api-cfn.conf" do
@@ -95,26 +88,44 @@ template "/etc/heat/heat-api-cfn.conf" do
     :admin_user => node[:heat][:admin_user],
     :admin_password => node[:heat][:admin_password]
     })
+  notifies :restart, 'service[heat-api-cfn]', :delayed
+end
+
+if node[:cloud]
+  public_ip = node[:heat][:public_ip] || node[:cloud][:public_ipv4] 
+else
+  public_ip = node[:heat][:public_ip] || node[:ipaddress]
+end
+
+template "/etc/heat/heat-engine.conf" do
+  source "heat-engine.conf.erb"
+  variables({
+    :rpc_backend => "heat.openstack.common.rpc.impl_kombu",
+    :watch_server_url => "http://#{public_ip}:8003",
+    :waitcondition_server_url => "http://#{public_ip}:8000/v1/waitcondition",
+    :metadata_server_url => "http://#{public_ip}:8000",
+    :auth_encryption_key => node[:heat][:auth_encryption_key]
+    })
+  notifies :restart, 'service[heat-engine]', :delayed
 end
 
 bash "setup heat db" do
   code "heat-db-setup deb -r #{node[:mysql][:server_root_password]}"
 end
 
-# Start the services
-# TODO: Use service manager like upstart or runit for this
-bash "start heat engine" do
-  code "heat-engine &"
-end
+# create and start the services
+%w{ heat-engine heat-api heat-api-cfn heat-api-cloudwatch }.each do |srv|
+  service_factory srv do
+    service_desc "#{srv} service"
+    exec "/usr/local/bin/#{srv}"
+    run_user "root"
+    run_group "root"
+    action :create # https://github.com/org-binbab/cookbook-service_factory/issues/2
+  end
 
-bash "start heat-api" do
-  code "heat-api &"
-end
+  service srv do
+    provider node[:heat][:platform][:service_provider]
+    action [:enable, :start]
+  end
 
-bash "start heat-api-cfn" do
-  code "heat-api-cfn &"
-end
-
-bash "start heat-api-cloudwatch" do
-  code "heat-api-cloudwatch &"
 end
