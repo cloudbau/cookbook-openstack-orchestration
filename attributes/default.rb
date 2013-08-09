@@ -10,6 +10,9 @@ default[:heat][:admin_user] = "heat"
 default[:heat][:admin_password] = "badpassword"
 default[:heat][:auth_encryption_key] = nil
 
+default[:heat][:user] = "heat"
+default[:heat][:group] = "heat"
+
 # TODO add more platforms
 case platform
 when "ubuntu"

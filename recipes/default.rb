@@ -21,6 +21,12 @@ include_recipe "apt"
 include_recipe "mysql::server"
 include_recipe "rabbitmq::default"
 
+user node[:heat][:user]
+
+group node[:heat][:group] do
+  members node[:heat][:user]
+end
+
 node[:heat][:platform][:dependencies].each do |pkg|
   package pkg do
     action :install
@@ -44,6 +50,10 @@ bash "install_heat" do
   action :nothing
 end
 
+directory "/var/log/heat" do
+  user node[:heat][:user]
+  group node[:heat][:group]
+end
 
 template "/etc/heat/heat-api.conf" do 
   source "heat-api.conf.erb"
@@ -117,8 +127,9 @@ end
   service_factory srv do
     service_desc "#{srv} service"
     exec "/usr/local/bin/#{srv}"
-    run_user "root"
-    run_group "root"
+    run_user node[:heat][:user]
+    run_group node[:heat][:group]
+    log_file "/var/log/#{srv.sub(/-/,"/")}.log"
     action :create # https://github.com/org-binbab/cookbook-service_factory/issues/2
   end
 
