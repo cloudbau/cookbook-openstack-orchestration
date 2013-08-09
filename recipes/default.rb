@@ -35,7 +35,7 @@ git "heat" do
   reference node[:heat][:git_revision]
   destination "/tmp/heat"
   action :sync
-  notifies :run, "bash[install_heat]"
+  notifies :run, "bash[install_heat]", :immediately
 end
 
 # needs python-pip
