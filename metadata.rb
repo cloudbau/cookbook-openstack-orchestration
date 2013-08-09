@@ -10,6 +10,5 @@ supports "ubuntu", ">= 12.04"
 
 depends "mysql"
 depends "rabbitmq"
-depends "service_factory", "= 0.1.2"
 depends "apt", "~> 1.4.4"
 depends "python"

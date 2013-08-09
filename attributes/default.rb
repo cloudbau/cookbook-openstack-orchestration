@@ -30,6 +30,7 @@ when "ubuntu"
       libxslt-dev
       python-pip
     },
-    :service_provider => Chef::Provider::Service::Upstart 
+    :service_provider => Chef::Provider::Service::Upstart,
+    :service_template_source => 'heat.upstart.erb'
   }
 end

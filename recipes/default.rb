@@ -124,13 +124,20 @@ end
 
 # create and start the services
 %w{ heat-engine heat-api heat-api-cfn heat-api-cloudwatch }.each do |srv|
-  service_factory srv do
-    service_desc "#{srv} service"
-    exec "/usr/local/bin/#{srv}"
-    run_user node[:heat][:user]
-    run_group node[:heat][:group]
-    log_file "/var/log/#{srv.sub(/-/,"/")}.log"
-    action :create # https://github.com/org-binbab/cookbook-service_factory/issues/2
+  template "/etc/init/#{srv}.conf" do
+    source node[:heat][:platform][:service_template_source]
+    variables({
+      :description => "#{srv} service",
+      :exec => "/usr/local/bin/#{srv}",
+      :log_file => "/var/log/#{srv.sub(/-/,"/")}.log",
+      :pid_file => "/var/run/#{srv}.pid",
+      :run_user => node[:heat][:user]
+    })
+  end
+
+  file "/var/log/#{srv.sub(/-/,"/")}.log" do
+    user node[:heat][:user]
+    group node[:heat][:group]
   end
 
   service srv do

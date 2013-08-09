@@ -1,0 +1,26 @@
+description "<%= @description %>"
+
+env EXECUTE=<%= @exec %>
+env PROCESS=<%= @exec.split("/").last %>
+
+env PID_FILE=<%= @pid_file %>
+env LOG_FILE=<%= @log_file %>
+env RUN_USER=<%= @run_user %>
+
+start on runlevel [35]
+stop on starting rc RUNLEVEL=[016]
+# ensures long kill timeout's are enforced
+kill timeout 5
+respawn
+respawn limit 1 30
+
+umask 0027
+
+script
+  if [ -x "/sbin/start-stop-daemon" ] ; then
+    exec start-stop-daemon -c $RUN_USER -p $PID_FILE -m -x $EXECUTE --start --
+  else
+    # WARNING: Reload/SIGHUP signals will not permiate this command.
+    exec su -l -s /bin/bash -c "exec \$0 \$@ & echo \$! > $PID_FILE && wait" $RUN_USER -- $EXECUTE
+  fi
+end script
