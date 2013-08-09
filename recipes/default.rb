@@ -18,8 +18,6 @@
 # 
 
 include_recipe "apt"
-resources(:execute => 'apt-get update').run_action(:run)
-
 include_recipe "mysql::server"
 include_recipe "rabbitmq::default"
 
