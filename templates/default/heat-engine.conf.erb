@@ -60,7 +60,7 @@ heat_waitcondition_server_url = <%= @waitcondition_server_url %>
 # the heat-api-cloudwatch API
 # NOTE : change this from 127.0.0.1 !!
 #heat_watch_server_url = http://127.0.0.1:8003
-heat_watch_server_url = <% @watch_server_url %>
+heat_watch_server_url = <%= @watch_server_url %>
 
 # The namespace for the custom backend. Must provide class Clients which will be
 # imported. Defaults to OpenStack if none provided.

@@ -43,6 +43,7 @@ end
 # needs python-pip
 bash "install_heat" do
   code "cd /tmp/heat && ./install.sh"
+  action :nothing
 end
 
 
