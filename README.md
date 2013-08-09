@@ -31,9 +31,11 @@ Example `config.yml`
       echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
 
-Deploy the heat using:
+Deploy the heat on OpenStack using:
 
-    vagrant up --provider=openstack
+    USE_OS=true vagrant up --provider=openstack
+
+or locally with `vagrant up`.
 
 # Usage
 
