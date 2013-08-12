@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   if ENV['USE_OS'] == 'true'
     config.vm.box = "dummy"
-    config.vm.box_url = "https://github.com/cloudbau/vagrant-openstack/raw/master/dummy.box"
+    config.vm.box_url = "https://github.com/cloudbau/vagrant-openstack-plugin/raw/master/dummy.box"
     config.ssh.private_key_path = config_yml['private_key_path'] || "#{ENV['HOME']}/.ssh/id_rsa"
     
     config.vm.provider :openstack do |os|
