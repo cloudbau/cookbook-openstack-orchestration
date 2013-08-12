@@ -55,7 +55,7 @@ directory "/var/log/heat" do
   group node[:heat][:group]
 end
 
-template "/etc/heat/heat-api.conf" do 
+template "/etc/heat/heat-api.conf" do
   source "heat-api.conf.erb"
   variables({
     :rpc_backend => "heat.openstack.common.rpc.impl_kombu",
@@ -66,11 +66,11 @@ template "/etc/heat/heat-api.conf" do
     :admin_tenant_name => node[:heat][:admin_tenant_name],
     :admin_user => node[:heat][:admin_user],
     :admin_password => node[:heat][:admin_password]
-    })
+  })
   notifies :restart, 'service[heat-api]', :delayed
 end
 
-template "/etc/heat/heat-api-cloudwatch.conf" do 
+template "/etc/heat/heat-api-cloudwatch.conf" do
   source "heat-api-cloudwatch.conf.erb"
   variables({
     :rpc_backend => "heat.openstack.common.rpc.impl_kombu",
@@ -81,7 +81,7 @@ template "/etc/heat/heat-api-cloudwatch.conf" do
     :admin_tenant_name => node[:heat][:admin_tenant_name],
     :admin_user => node[:heat][:admin_user],
     :admin_password => node[:heat][:admin_password]
-    })
+  })
   notifies :restart, 'service[heat-api-cloudwatch]', :delayed
 end
 
@@ -96,12 +96,12 @@ template "/etc/heat/heat-api-cfn.conf" do
     :admin_tenant_name => node[:heat][:admin_tenant_name],
     :admin_user => node[:heat][:admin_user],
     :admin_password => node[:heat][:admin_password]
-    })
+  })
   notifies :restart, 'service[heat-api-cfn]', :delayed
 end
 
 if node[:cloud]
-  public_ip = node[:heat][:public_ip] || node[:cloud][:public_ipv4] 
+  public_ip = node[:heat][:public_ip] || node[:cloud][:public_ipv4]
 else
   public_ip = node[:heat][:public_ip] || node[:ipaddress]
 end
@@ -114,7 +114,7 @@ template "/etc/heat/heat-engine.conf" do
     :waitcondition_server_url => "http://#{public_ip}:8000/v1/waitcondition",
     :metadata_server_url => "http://#{public_ip}:8000",
     :auth_encryption_key => node[:heat][:auth_encryption_key]
-    })
+  })
   notifies :restart, 'service[heat-engine]', :delayed
 end
 
@@ -129,13 +129,13 @@ end
     variables({
       :description => "#{srv} service",
       :exec => "/usr/local/bin/#{srv}",
-      :log_file => "/var/log/#{srv.sub(/-/,"/")}.log",
+      :log_file => "/var/log/#{srv.sub(/-/, "/")}.log",
       :pid_file => "/var/run/#{srv}.pid",
       :run_user => node[:heat][:user]
     })
   end
 
-  file "/var/log/#{srv.sub(/-/,"/")}.log" do
+  file "/var/log/#{srv.sub(/-/, "/")}.log" do
     user node[:heat][:user]
     group node[:heat][:group]
   end
