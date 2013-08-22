@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: cookbook-openstack-orchestration
+# Cookbook Name:: openstack-orchestration
 # Recipe:: default
 #
 # Copyright (C) 2013 cloudbau GmbH
@@ -44,9 +44,14 @@ git "heat" do
   notifies :run, "bash[install_heat]", :immediately
 end
 
+file '/tmp/heat/setup.py' do
+  mode '744'
+end
+
 # needs python-pip
 bash "install_heat" do
-  code "cd /tmp/heat && ./install.sh"
+  cwd '/tmp/heat'
+  code './install.sh'
   action :nothing
 end
 

@@ -18,6 +18,7 @@ Vagrant.configure("2") do |config|
     config.vm.provider :openstack do |os|
         os.username = config_yml['os_username']
         os.api_key  = config_yml['os_password']
+        os.tenant   = config_yml['os_tenant'] if config_yml['os_tenant']
         os.flavor   = /m1.small/
         os.image    = config_yml['os_image'] || /Ubuntu-Vagrant/
         os.network  = config_yml['os_network'] || 'default'
@@ -36,6 +37,7 @@ Vagrant.configure("2") do |config|
   config.ssh.timeout   = 120
 
   config.vm.provision :chef_solo do |chef|
+    chef.log_level = :debug
     chef.json = {
       :mysql => {
         :server_root_password => 'secretroot',
@@ -46,10 +48,11 @@ Vagrant.configure("2") do |config|
         :auth_host => config_yml['os_keystone_host'],
         :auth_port => "35357",
         :auth_protocol => "http",
-        :auth_uri => "http://#{config_yml['os_keystone_host']}:5000/v2.0",
+        :auth_uri => "http://#{config_yml['os_keystone_host']}:35357/v2.0",
         :admin_tenant_name => "service",
         :admin_user => config_yml['heat_keystone_user'],
         :admin_password => config_yml['heat_keystone_pass'],
+        :admin_token => config_yml['os_admin_token'],
         :auth_encryption_key => config_yml['heat_auth_encryption_key'],
         :public_ip => config_yml['os_floating_ip']
       }
