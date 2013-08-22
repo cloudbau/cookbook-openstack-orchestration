@@ -44,9 +44,14 @@ git "heat" do
   notifies :run, "bash[install_heat]", :immediately
 end
 
+file '/tmp/heat/setup.py' do
+  mode '744'
+end
+
 # needs python-pip
 bash "install_heat" do
-  code "cd /tmp/heat && ./install.sh"
+  cwd '/tmp/heat'
+  code './install.sh'
   action :nothing
 end
 
