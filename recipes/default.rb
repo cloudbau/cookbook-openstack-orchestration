@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: cookbook-openstack-orchestration
+# Cookbook Name:: openstack-orchestration
 # Recipe:: default
 #
 # Copyright (C) 2013 cloudbau GmbH

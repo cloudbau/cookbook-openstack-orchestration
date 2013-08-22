@@ -58,7 +58,8 @@ Vagrant.configure("2") do |config|
       }
     }
     chef.run_list = [
-      "recipe[openstack-orchestration::default]"
+      "recipe[openstack-orchestration::default]",
+      "recipe[openstack-orchestration::identity_registration]"
     ]
   end
 end
